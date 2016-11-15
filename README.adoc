@@ -1,0 +1,77 @@
+= Cash Register
+
+This is a simple cash register program
+
+== Build & Test
+
+[source, bash]
+----
+./gradlew build
+----
+
+== Run the Application
+
+=== via Gradle
+
+[source, bash]
+----
+# Need to avoid running the daemon and quiet mode
+./gradlew run --no-daemon -q
+----
+
+=== via JAR
+
+You need to build the source before running the following command.
+
+[source, bash]
+----
+jar -jar build/libs/cash-register-1.0.0.jar
+----
+
+=== via IntelliJ
+
+. Go to the `src/main/kotlin/cashregister/main.kt` class
+. Right click on the class name and click "Run"
+
+== Change Algorithm
+
+=== Current Solution
+
+. Find the first bill that can be used
+. Calculate the quantity of those bills that can go into the remaining total
+. Remove the (quantity * bill dollar amount) from the remaining total to eventually reach 0
+. Iterate through rest of the bills with steps 2 & 3
+. IF the remaining total is not 0 meaning that change has not been met
+** Reset the loop starting at the largest bill
+** Reduce the quantity stored for that bill by 1 and add back the value to the remaining total
+** Continue iteration with lower bills
+
+It is similar to the subset sum problem listed below.
+
+=== Subset Sum
+
+There is a popular problem called the link:https://en.wikipedia.org/wiki/Subset_sum_problem[subset sum problem] that could be used to solve getting the right combination of bills for change.
+Unfortunately, this can get very slow with larger quantities of bills.
+
+The solution is not very pretty in Kotlin, but in other functional languages, there are interesting solutions:
+
+In order to do the following to work, the dollar amounts for each bill would have to be put into a list (quantity times).
+
+So, if the cash register has $20 (1), $10 (0), $5 (3), $2 (4), $1 (0), the list would be [20, 5, 5, 5, 2, 2, 2, 2].
+
+Elixir (roughly):
+[source, elixir]
+----
+# To get all permutations
+def of(list) do
+  for h <- list, t <- of(list -- [h]), do: [h | t]
+end
+# All possible change solutions
+Enum.filter(of(SOME_LIST), fn (list) -> { Enum.sum(list) == totalRequested })
+----
+
+Even cleaner version in Haskell where `12345` is the change requested:
+[source, haskell]
+----
+filter ((==) 12345 . sum) $ subsequences [1,5,22,15,0,..]
+----

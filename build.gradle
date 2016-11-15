@@ -1,0 +1,77 @@
+apply plugin: 'kotlin'
+apply plugin: 'application'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+
+group = 'goomar.rishi'
+version = '1.0.0'
+mainClassName = 'cashregister.MainKt'
+
+buildscript {
+    ext.kotlin_version = '1.0.4'
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M2'
+    }
+}
+
+junitPlatform {
+    engines {
+        include 'spek'
+    }
+}
+
+repositories {
+    jcenter()
+}
+
+/*
+ * Need to empty the source sets for Java otherwise, it generates it
+ */
+sourceSets {
+    main {
+        java {
+            srcDirs = []
+        }
+    }
+    test {
+        java {
+            srcDirs = []
+        }
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'io.github.microutils:kotlin-logging:1.4'
+    compile "org.slf4j:slf4j-simple:1.7.21"
+    compile "jline:jline:2.12"
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testCompile 'org.jetbrains.spek:spek-api:1.0.89'
+    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.0.89'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': mainClassName
+        )
+    }
+    // Weird issue with Kotlin and distributable JARs, required to add this
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+model {
+    tasks {
+        run {
+            standardInput = System.in
+        }
+        wrapper {
+            gradleVersion = '3.1'
+        }
+    }
+}
