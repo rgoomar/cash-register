@@ -48,6 +48,7 @@ fun help(out: PrintWriter) {
     out.println("take [$20] [$10] [$5] [$2] [$1] - Take money from the register")
     out.println("put [$20] [$10] [$5] [$2] [$1] - Put money from the register")
     out.println("change [amount] - Get change from the register")
+    out.println("quit")
     out.println("------------------")
 }
 
